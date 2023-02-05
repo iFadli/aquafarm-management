@@ -6,97 +6,167 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ItemHandler menangani permintaan HTTP untuk item
-type ItemHandler struct {
-	itemUsecase *usecase.ItemUsecase
+// FarmHandler menangani permintaan HTTP untuk item
+type FarmHandler struct {
+	farmUsecase *usecase.FarmUsecase
 }
 
-// NewItemHandler membuat instance baru ItemHandler
-func NewItemHandler(iu *usecase.ItemUsecase) *ItemHandler {
-	return &ItemHandler{
-		itemUsecase: iu,
+// NewFarmHandler membuat instance baru ItemHandler
+func NewFarmHandler(iu *usecase.FarmUsecase) *FarmHandler {
+	return &FarmHandler{
+		farmUsecase: iu,
 	}
 }
 
 // Fetch mengambil semua item
-func (h *ItemHandler) Fetch(c *gin.Context) {
+func (h *FarmHandler) Fetch(c *gin.Context) {
 	// memanggil usecase untuk mengambil item
-	items, err := h.itemUsecase.Fetch()
+	farms, err := h.farmUsecase.Fetch()
 	if err != nil {
 		// menangani error
-		c.JSON(500, gin.H{"message": err.Error()})
+		c.JSON(500, gin.H{
+			"status":  500,
+			"message": err.Error(),
+		})
 		return
 	}
-	c.JSON(200, gin.H{"data": items})
+	c.JSON(200, gin.H{
+		"status": 200,
+		"data":   farms,
+	})
 }
 
-// Get mengambil item berdasarkan ID
-func (h *ItemHandler) Get(c *gin.Context) {
+// GetById mengambil Farm berdasarkan ID
+func (h *FarmHandler) GetById(c *gin.Context) {
 	// mengambil ID item dari URL
-	id := c.Param("id")
+	farmId := c.Param("farm_id")
 	// memanggil usecase untuk mengambil item
-	item, err := h.itemUsecase.Get(id)
+	item, isNotFound, err := h.farmUsecase.GetById(farmId)
 	if err != nil {
 		// menangani error
-		c.JSON(500, gin.H{"message": err.Error()})
+		c.JSON(500, gin.H{
+			"status":  500,
+			"message": err.Error(),
+		})
 		return
 	}
-	c.JSON(200, gin.H{"data": item})
+	if isNotFound {
+		c.JSON(404, gin.H{
+			"status":  404,
+			"message": "farm data '" + farmId + "' tidak ada",
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"status": 200,
+		"data":   item,
+	})
 }
 
-// Store membuat item baru
-func (h *ItemHandler) Store(c *gin.Context) {
+// Store membuat Farm baru
+func (h *FarmHandler) Store(c *gin.Context) {
 	// mengambil data item dari permintaan HTTP
-	var item model.Item
-	err := c.BindJSON(&item)
+	var farm model.Farm
+	err := c.BindJSON(&farm)
 	if err != nil {
 		// menangani error
-		c.JSON(500, gin.H{"message": err.Error()})
+		c.JSON(500, gin.H{
+			"status":  500,
+			"message": err.Error(),
+		})
 		return
 	}
 
+	if farm.ID == "" || farm.Name == "" {
+		c.JSON(500, gin.H{
+			"status":  500,
+			"message": "please read documentation, system need more data",
+		})
+		return
+	}
+
+	var isDuplicateEntry bool
 	// memanggil usecase untuk membuat item baru
-	_, err = h.itemUsecase.Store(&item)
-	if err != nil {
-		// menangani error
-		c.JSON(500, gin.H{"message": err.Error()})
+	_, isDuplicateEntry, err = h.farmUsecase.Store(&farm)
+	if isDuplicateEntry {
+		c.JSON(409, gin.H{
+			"status":  409,
+			"message": "data farm dengan farm_id '" + farm.ID + "' sudah pernah dibuat",
+		})
 		return
 	}
-	c.JSON(200, gin.H{"message": "success"})
+	if err != nil {
+		// menangani error
+		c.JSON(500, gin.H{
+			"status":  500,
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"status":  200,
+		"message": "input data berhasil",
+	})
 }
 
-// Update memperbarui item
-func (h *ItemHandler) Update(c *gin.Context) {
-	// mengambil ID item dari URL
-	id := c.Param("id")
-	// mengambil data item dari permintaan HTTP
-	var item model.Item
-	err := c.BindJSON(&item)
+// UpdateById memperbarui Farm berdasarkan farm_id
+func (h *FarmHandler) UpdateById(c *gin.Context) {
+	// mengambil body JSON farm dari Body Post
+	var farm model.Farm
+	err := c.BindJSON(&farm)
 	if err != nil {
 		// menangani error
-		c.JSON(500, gin.H{"message": err.Error()})
+		c.JSON(500, gin.H{
+			"status":  500,
+			"message": err.Error(),
+		})
 		return
 	}
+
 	// memanggil usecase untuk memperbarui item
-	err = h.itemUsecase.Update(id, &item)
+	isCreateData, err := h.farmUsecase.UpdateById(&farm)
 	if err != nil {
 		// menangani error
-		c.JSON(500, gin.H{"message": err.Error()})
+		c.JSON(500, gin.H{
+			"status":  500,
+			"message": err.Error(),
+		})
 		return
 	}
-	c.JSON(200, gin.H{"message": "success"})
+	if isCreateData {
+		c.JSON(201, gin.H{
+			"status":  201,
+			"message": "pembuatan data '" + farm.ID + " berhasil",
+		})
+		return
+	}
+	c.JSON(202, gin.H{
+		"status":  202,
+		"message": "pembaharuan data '" + farm.ID + "' berhasil",
+	})
 }
 
-// Delete menghapus item
-func (h *ItemHandler) Delete(c *gin.Context) {
-	// mengambil ID item dari URL
-	id := c.Param("id")
-	// memanggil usecase untuk menghapus item
-	err := h.itemUsecase.Delete(id)
-	if err != nil {
-		// menangani error
-		c.JSON(500, gin.H{"message": err.Error()})
+// SoftDeleteById menghapus data Farm berdasarkan farm_id
+func (h *FarmHandler) SoftDeleteById(c *gin.Context) {
+	farmId := c.Param("farm_id")
+	isDataNotFound, err := h.farmUsecase.SoftDeleteById(farmId)
+	if isDataNotFound {
+		c.JSON(404, gin.H{
+			"status":  404,
+			"message": "farm data '" + farmId + "' tidak ada",
+		})
 		return
 	}
-	c.JSON(200, gin.H{"message": "success"})
+	if err != nil {
+		// menangani error
+		c.JSON(500, gin.H{
+			"status":  500,
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"status":  200,
+		"message": "hapus data berhasil",
+	})
 }

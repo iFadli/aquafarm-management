@@ -1,5 +1,6 @@
 services:
   backend:
+    hostname: backend-hub.docker
     build: backend
     environment:
       - DB_HOST=${DB_HOST}
@@ -9,7 +10,7 @@ services:
     depends_on:
       - db
   db:
-    build: db
+    hostname: db-hub.docker
     image: mariadb
     restart: always
     volumes:
@@ -22,6 +23,7 @@ services:
     ports:
       - 3306:3306
   proxy:
+    hostname: proxy-hub.docker
     build: proxy
     ports:
       - 8080:80

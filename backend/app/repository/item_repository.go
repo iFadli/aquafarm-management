@@ -15,30 +15,8 @@ import (
 type ItemRepository struct {
 	DB *sql.DB
 }
-type Repository interface {
-	Fetch() ([]*model.Item, error)
-	Get(id int) (*model.Item, error)
-	Create(item *model.Item) error
-	Update(item *model.Item) error
-	Delete(id int) error
-}
 
-// NewDB membuat koneksi baru pada database
-//func NewDB(driverName, cfg *config.Config) (DB, error) {
-//	dataSourceName := ""
-//	db, err := sql.Open(driverName, dataSourceName)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	if err := db.Ping(); err != nil {
-//		return nil, err
-//	}
-//
-//	return db, nil
-//}
-
-// NewItemRepository membuat item repository baru
+// NewItemRepository membuat repository baru
 func NewItemRepository(db *DbRepository) *ItemRepository {
 	return &ItemRepository{DB: db.DB}
 }
@@ -113,9 +91,9 @@ func (r *ItemRepository) Store(item *model.Item) (*model.Item, error) {
 }
 
 // Update updates an existing item in the database
-func (ir *ItemRepository) Update(item *model.Item) error {
+func (r *ItemRepository) Update(item *model.Item) error {
 	query := `UPDATE items SET name=?, created_at=? WHERE id=?`
-	stmt, err := ir.DB.Prepare(query)
+	stmt, err := r.DB.Prepare(query)
 	if err != nil {
 		return err
 	}
@@ -136,9 +114,9 @@ func (ir *ItemRepository) Update(item *model.Item) error {
 }
 
 // Delete deletes an existing item from the database
-func (ir *ItemRepository) Delete(id string) error {
+func (r *ItemRepository) Delete(id string) error {
 	query := `DELETE FROM items WHERE id=?`
-	stmt, err := ir.DB.Prepare(query)
+	stmt, err := r.DB.Prepare(query)
 	if err != nil {
 		return err
 	}
