@@ -19,12 +19,29 @@ func New(cfg *config.Config) *App {
 
 	db := repository.NewDB(cfg)
 
-	itemRepository := repository.NewItemRepository(db)
-	itemUsecase := usecase.NewItemUsecase(itemRepository)
+	repository.SetupDB(db)
+
+	// INIT - Item
+	newRepository := repository.NewItemRepository(db)
+	itemUsecase := usecase.NewItemUsecase(newRepository)
 	itemHandler := handler.NewItemHandler(itemUsecase)
+
+	// INIT - Farm
+	farmRepo := repository.NewFarmRepository(db)
+	farmCase := usecase.NewFarmUsecase(farmRepo)
+	farmHand := handler.NewFarmHandler(farmCase)
 
 	v1 := a.Router.Group("/v1")
 	{
+		farm := v1.Group("/farm")
+		{
+			farm.GET("/", farmHand.Fetch)
+			farm.GET("/:farm_id", farmHand.GetById)
+			farm.POST("/", farmHand.Store)
+			farm.PUT("/", farmHand.UpdateById)
+			farm.DELETE("/:farm_id", farmHand.SoftDeleteById)
+		}
+
 		pond := v1.Group("/pond")
 		{
 			pond.GET("/", itemHandler.Fetch)
@@ -32,15 +49,6 @@ func New(cfg *config.Config) *App {
 			pond.POST("/", itemHandler.Store)
 			pond.PUT("/:id", itemHandler.Update)
 			pond.DELETE("/:id", itemHandler.Delete)
-		}
-
-		farm := v1.Group("/farm")
-		{
-			farm.GET("/", itemHandler.Fetch)
-			farm.GET("/:id", itemHandler.Get)
-			farm.POST("/", itemHandler.Store)
-			farm.PUT("/:id", itemHandler.Update)
-			farm.DELETE("/:id", itemHandler.Delete)
 		}
 
 		logs := v1.Group("/logs")
