@@ -75,3 +75,52 @@ func (r *LogRepository) FirstLog(log *model.Logs) (*model.Logs, error) {
 
 	return log, nil
 }
+
+// FetchStatistics mengambil perhitungan data pada tabel Logs
+func (r *LogRepository) FetchStatistics() ([]model.StatisticsDB, error) {
+	query := `	SELECT 
+				  CASE
+				    WHEN request LIKE 'GET /v1/pond/%' THEN 'GET /v1/pond/'
+				    WHEN request LIKE 'DELETE /v1/pond/%' THEN 'DELETE /v1/pond/'
+				    WHEN request LIKE 'GET /v1/farm/%' THEN 'GET /v1/farm/'
+				    WHEN request LIKE 'DELETE /v1/farm/%' THEN 'DELETE /v1/farm/'
+				    ELSE request
+				  END as grouped_request,
+				  COUNT(*) as count,
+				  COUNT(DISTINCT user_agent) as unique_user_agent,
+				  SUM(CASE WHEN response = '200' THEN 1 ELSE 0 END) as response_200,
+				  SUM(CASE WHEN response = '404' THEN 1 ELSE 0 END) as response_404,
+				  SUM(CASE WHEN response = '500' THEN 1 ELSE 0 END) as response_500,
+				  SUM(CASE WHEN response != '200' AND response != '404' AND response != '500' THEN 1 ELSE 0 END) as response_etc
+				FROM 
+				  logs
+				GROUP BY 
+				  grouped_request;`
+
+	rows, err := r.DB.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("error querying items: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("error closing rows: %v", err)
+		}
+	}()
+
+	var logs []model.StatisticsDB
+	for rows.Next() {
+		var log model.StatisticsDB
+		if err := rows.Scan(
+			&log.Request, &log.Count, &log.UniqueUserAgent, &log.Response200,
+			&log.Response404, &log.Response500, &log.ResponseETC); err != nil {
+			return nil, fmt.Errorf("error scanning row: %w", err)
+		}
+		logs = append(logs, log)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error fetching rows: %w", err)
+	}
+
+	return logs, nil
+}

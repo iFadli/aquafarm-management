@@ -53,10 +53,10 @@ func New(cfg *config.Config) *App {
 		logRepo.FirstLog(logger)
 	})
 
-	// INIT - Item
-	newRepository := repository.NewItemRepository(db)
-	itemUsecase := usecase.NewItemUsecase(newRepository)
-	itemHandler := handler.NewItemHandler(itemUsecase)
+	//// INIT - Item
+	//newRepository := repository.NewItemRepository(db)
+	//itemUsecase := usecase.NewItemUsecase(newRepository)
+	//itemHandler := handler.NewItemHandler(itemUsecase)
 
 	// INIT - Farm
 	farmRepo := repository.NewFarmRepository(db)
@@ -67,6 +67,10 @@ func New(cfg *config.Config) *App {
 	pondRepo := repository.NewPondRepository(db)
 	pondCase := usecase.NewPondUsecase(pondRepo, farmRepo)
 	pondHand := handler.NewPondHandler(pondCase)
+
+	//INIT - Stat
+	statCase := usecase.NewStatUsecase(logRepo)
+	statHand := handler.NewStatHandler(statCase)
 
 	v1 := authorized.Group("/v1")
 	{
@@ -90,8 +94,8 @@ func New(cfg *config.Config) *App {
 
 		logs := v1.Group("/logs")
 		{
-			logs.GET("/", itemHandler.Fetch)
-			logs.GET("/statistics", itemHandler.Fetch)
+			logs.GET("/", statHand.FetchLogs)
+			logs.GET("/statistics", statHand.Fetch)
 		}
 	}
 
