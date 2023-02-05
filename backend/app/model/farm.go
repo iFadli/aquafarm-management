@@ -8,3 +8,15 @@ type Farm struct {
 	CreatedAt string `json:"created_at,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
 }
+
+type FarmShow struct {
+	ID        string `json:"farm_id"`
+	Name      string `json:"farm_name"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+}
+
+type FarmStore struct {
+	ID   string `json:"farm_id"`
+	Name string `json:"farm_name"`
+}

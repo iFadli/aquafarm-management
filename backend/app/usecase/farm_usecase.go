@@ -45,7 +45,7 @@ func (u *FarmUsecase) Store(farm *model.Farm) (*model.Farm, bool, error) {
 }
 
 // UpdateById memperbarui data Farm dari repository
-// @return :    - bool : isUpdate=false | isCreate=true
+//	@return	:    - bool : isUpdate=false | isCreate=true
 //			    - error : apabila ada masalah
 func (u *FarmUsecase) UpdateById(farm *model.Farm) (bool, error) {
 	// memanggil usecase untuk memvalidasi farm
@@ -63,7 +63,7 @@ func (u *FarmUsecase) UpdateById(farm *model.Farm) (bool, error) {
 }
 
 // SoftDeleteById menghapus Farm dari repository
-// @return :    - bool : isDataNotFound=true | isDataFound=true
+//	@return	:    - bool : isDataNotFound=true | isDataFound=true
 //			    - error : apabila ada masalah
 func (u *FarmUsecase) SoftDeleteById(id string) (bool, error) {
 	// memanggil usecase untuk memvalidasi farm

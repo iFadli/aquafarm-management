@@ -7,6 +7,8 @@ import (
 	"aquafarm-management/app/repository"
 	"aquafarm-management/app/usecase"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 	"strconv"
 )
@@ -19,6 +21,10 @@ func New(cfg *config.Config) *App {
 	a := &App{
 		Router: gin.Default(),
 	}
+
+	//url := ginSwagger.URL("./swagger/doc.json")
+	//a.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+	a.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	db := repository.NewDB(cfg)
 
@@ -35,8 +41,8 @@ func New(cfg *config.Config) *App {
 		accessId, err := authRepo.GetApiKey(headerAPIKey)
 		if err != nil || accessId == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"status": http.StatusUnauthorized,
-				"error":  "Unauthorized",
+				"status":  http.StatusUnauthorized,
+				"message": "Unauthorized",
 			})
 			return
 		}

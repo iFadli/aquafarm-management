@@ -1,4 +1,680 @@
+basePath: /
+definitions:
+  model.FarmShow:
+    properties:
+      created_at:
+        type: string
+      farm_id:
+        type: string
+      farm_name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.FarmStore:
+    properties:
+      farm_id:
+        type: string
+      farm_name:
+        type: string
+    type: object
+  model.Logs:
+    properties:
+      access_id:
+        type: string
+      access_name:
+        type: string
+      accessed_at:
+        type: string
+      ip_address:
+        type: string
+      request:
+        type: string
+      response:
+        type: string
+      sequence:
+        type: string
+      user_agent:
+        type: string
+    type: object
+  model.PondShow:
+    properties:
+      created_at:
+        type: string
+      farm_id:
+        type: string
+      farm_name:
+        type: string
+      pond_id:
+        type: string
+      pond_name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.PondStore:
+    properties:
+      farm_id:
+        type: string
+      pond_id:
+        type: string
+      pond_name:
+        type: string
+    type: object
+  model.StatisticsData:
+    properties:
+      count:
+        type: integer
+      response_200:
+        type: integer
+      response_404:
+        type: integer
+      response_500:
+        type: integer
+      response_etc:
+        type: integer
+      unique_user_agent:
+        type: integer
+    type: object
+  model.StatisticsGroup:
+    properties:
+      request:
+        additionalProperties:
+          $ref: '#/definitions/model.StatisticsData'
+        type: object
+    type: object
+  response.HTTPResponseAction:
+    properties:
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+  response.HTTPResponseDataFarm:
+    properties:
+      data:
+        $ref: '#/definitions/model.FarmShow'
+      status:
+        type: integer
+    type: object
+  response.HTTPResponseDataFarms:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.FarmShow'
+        type: array
+      status:
+        type: integer
+    type: object
+  response.HTTPResponseDataLogs:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Logs'
+        type: array
+      status:
+        type: integer
+    type: object
+  response.HTTPResponseDataPond:
+    properties:
+      data:
+        $ref: '#/definitions/model.PondShow'
+      status:
+        type: integer
+    type: object
+  response.HTTPResponseDataPonds:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.PondShow'
+        type: array
+      status:
+        type: integer
+    type: object
+  response.HTTPResponseDataStatistics:
+    properties:
+      data:
+        $ref: '#/definitions/model.StatisticsGroup'
+      status:
+        type: integer
+    type: object
+host: localhost:8000
 info:
-  contact: {}
-paths: {}
+  contact:
+    email: hi@fadli.dev
+    name: Fadli Zul Fahmi
+    url: http://www.linkedin.com/in/fadli-zul-fahmi
+  description: This is Assignment Workspace for Coding Test DELOS Aqua.
+  termsOfService: http://swagger.io/terms/
+  title: AquaFarm Management API
+  version: "0.6"
+paths:
+  /v1/farm:
+    post:
+      consumes:
+      - application/json
+      description: Insert one Farm Data.
+      parameters:
+      - description: Required Data to Insert Farm
+        in: body
+        name: pond
+        required: true
+        schema:
+          $ref: '#/definitions/model.FarmStore'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "409":
+          description: Conflict
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "500":
+          description: Internal Server Error
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: Insert new Farm data
+      tags:
+      - Farms
+    put:
+      consumes:
+      - application/json
+      description: Update exist Farm data or Insert new if not exist.
+      parameters:
+      - description: Required Data to Update or Insert Farm
+        in: body
+        name: pond
+        required: true
+        schema:
+          $ref: '#/definitions/model.FarmStore'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Create Data
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "202":
+          description: Update Data
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "500":
+          description: Internal Server Error
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: Update exist Farm data or Insert new
+      tags:
+      - Farms
+  /v1/farm/:
+    get:
+      consumes:
+      - application/json
+      description: Get All Farms Data but only is_deleted = false.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseDataFarms'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "500":
+          description: Internal Server Error
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: Get All Farms Data
+      tags:
+      - Farms
+  /v1/farm/{farmId}:
+    delete:
+      consumes:
+      - application/json
+      description: Change Flagger (is_deleted) value on Database to TRUE.
+      parameters:
+      - description: Farm ID
+        in: path
+        name: farmId
+        required: true
+        type: string
+      - description: Pond ID
+        in: path
+        name: pondId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseDataPond'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "404":
+          description: Not Found
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "502":
+          description: Bad Gateway
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: (soft) Delete exist Farm data
+      tags:
+      - Farms
+    get:
+      consumes:
+      - application/json
+      description: Get one Farm Data but only is_deleted = false.
+      parameters:
+      - description: Farm ID
+        in: path
+        name: farmId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseDataFarm'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "404":
+          description: Not Found
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "500":
+          description: Internal Server Error
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: Get One Farm Data
+      tags:
+      - Farms
+  /v1/logs:
+    get:
+      consumes:
+      - application/json
+      description: Get All Logs Data From Logs Middleware.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseDataLogs'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "500":
+          description: Internal Server Error
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: Get All Logs Data
+      tags:
+      - Logs
+  /v1/logs/statistics:
+    get:
+      consumes:
+      - application/json
+      description: Get Statistics Data From Logs Middleware.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseDataStatistics'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "500":
+          description: Internal Server Error
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: Get Statistics Data
+      tags:
+      - Logs
+  /v1/pond:
+    post:
+      consumes:
+      - application/json
+      description: Insert one Pond Data by send the FarmdId.
+      parameters:
+      - description: Required Data to Insert Pond
+        in: body
+        name: pond
+        required: true
+        schema:
+          $ref: '#/definitions/model.PondStore'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "409":
+          description: Conflict
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "500":
+          description: Internal Server Error
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: Insert new Pond data
+      tags:
+      - Ponds
+    put:
+      consumes:
+      - application/json
+      description: Update exist Pond data or Insert new if not exist.
+      parameters:
+      - description: Required Data to Update or Insert Pond
+        in: body
+        name: pond
+        required: true
+        schema:
+          $ref: '#/definitions/model.PondStore'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Create Data
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "202":
+          description: Update Data
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "500":
+          description: Internal Server Error
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: Update exist Pond data or Insert new
+      tags:
+      - Ponds
+  /v1/pond/:
+    get:
+      consumes:
+      - application/json
+      description: Get All Ponds Data by Joining Farm Table.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseDataPonds'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "500":
+          description: Internal Server Error
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: Get All Ponds Data
+      tags:
+      - Ponds
+  /v1/pond/{farmId}/{pondId}:
+    delete:
+      consumes:
+      - application/json
+      description: Change Flagger (is_deleted) value on Database to TRUE.
+      parameters:
+      - description: Farm ID
+        in: path
+        name: farmId
+        required: true
+        type: string
+      - description: Pond ID
+        in: path
+        name: pondId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseDataPond'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "404":
+          description: Not Found
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "502":
+          description: Bad Gateway
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: (soft) Delete exist Pond data
+      tags:
+      - Ponds
+    get:
+      consumes:
+      - application/json
+      description: Get one Pond Data by Joining Farm Table.
+      parameters:
+      - description: Farm ID
+        in: path
+        name: farmId
+        required: true
+        type: string
+      - description: Pond ID
+        in: path
+        name: pondId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseDataPond'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "404":
+          description: Not Found
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+        "500":
+          description: Internal Server Error
+          headers:
+            Authorization:
+              description: apiKey
+              type: string
+          schema:
+            $ref: '#/definitions/response.HTTPResponseAction'
+      security:
+      - APIKeyHeader: []
+      summary: Get One Pond Data
+      tags:
+      - Ponds
+securityDefinitions:
+  APIKeyHeader:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
