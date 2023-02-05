@@ -3,10 +3,12 @@ package app
 import (
 	"aquafarm-management/app/config"
 	"aquafarm-management/app/handler"
+	"aquafarm-management/app/model"
 	"aquafarm-management/app/repository"
 	"aquafarm-management/app/usecase"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type App struct {
@@ -22,10 +24,39 @@ func New(cfg *config.Config) *App {
 
 	repository.SetupDB(db)
 
-	// INIT - Item
-	newRepository := repository.NewItemRepository(db)
-	itemUsecase := usecase.NewItemUsecase(newRepository)
-	itemHandler := handler.NewItemHandler(itemUsecase)
+	// INIT - AUTH
+	authRepo := repository.NewAuthRepository(db)
+	//INIT - LOGS
+	logRepo := repository.NewLogRepository(db)
+
+	authorized := a.Router.Group("/")
+	authorized.Use(func(c *gin.Context) {
+		headerAPIKey := c.GetHeader("Authorization")
+		accessId, err := authRepo.GetApiKey(headerAPIKey)
+		if err != nil || accessId == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"status": http.StatusUnauthorized,
+				"error":  "Unauthorized",
+			})
+			return
+		}
+
+		c.Next()
+		// Buat log baru
+		logger := &model.Logs{
+			AccessID:  accessId,
+			IpAddress: c.RemoteIP(),
+			UserAgent: c.Request.UserAgent(),
+			Request:   c.Request.Method + " " + c.Request.URL.Path,
+			Response:  strconv.Itoa(c.Writer.Status()),
+		}
+		logRepo.FirstLog(logger)
+	})
+
+	//// INIT - Item
+	//newRepository := repository.NewItemRepository(db)
+	//itemUsecase := usecase.NewItemUsecase(newRepository)
+	//itemHandler := handler.NewItemHandler(itemUsecase)
 
 	// INIT - Farm
 	farmRepo := repository.NewFarmRepository(db)
@@ -37,21 +68,9 @@ func New(cfg *config.Config) *App {
 	pondCase := usecase.NewPondUsecase(pondRepo, farmRepo)
 	pondHand := handler.NewPondHandler(pondCase)
 
-	// INIT - API
-	authRepo := repository.NewAuthRepository(db)
-
-	authorized := a.Router.Group("/")
-	authorized.Use(func(c *gin.Context) {
-		headerAPIKey := c.GetHeader("Authorization")
-		accessId, err := authRepo.GetApiKey(headerAPIKey)
-		if err != nil || accessId == nil || *accessId == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"status": http.StatusUnauthorized,
-				"error":  "Unauthorized",
-			})
-			return
-		}
-	})
+	//INIT - Stat
+	statCase := usecase.NewStatUsecase(logRepo)
+	statHand := handler.NewStatHandler(statCase)
 
 	v1 := authorized.Group("/v1")
 	{
@@ -75,8 +94,8 @@ func New(cfg *config.Config) *App {
 
 		logs := v1.Group("/logs")
 		{
-			logs.GET("/", itemHandler.Fetch)
-			logs.GET("/statistics", itemHandler.Fetch)
+			logs.GET("/", statHand.FetchLogs)
+			logs.GET("/statistics", statHand.Fetch)
 		}
 	}
 
