@@ -16,7 +16,7 @@ import (
 // @contact.url    http://www.linkedin.com/in/fadli-zul-fahmi
 // @contact.email  hi@fadli.dev
 
-// @host      localhost:8000
+// @host      localhost:8080
 // @BasePath  /
 
 // @securityDefinitions.apiKey APIKeyHeader
