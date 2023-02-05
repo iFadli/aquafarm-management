@@ -6,6 +6,7 @@ import (
 	"aquafarm-management/app/repository"
 	"aquafarm-management/app/usecase"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type App struct {
@@ -36,7 +37,23 @@ func New(cfg *config.Config) *App {
 	pondCase := usecase.NewPondUsecase(pondRepo, farmRepo)
 	pondHand := handler.NewPondHandler(pondCase)
 
-	v1 := a.Router.Group("/v1")
+	// INIT - API
+	authRepo := repository.NewAuthRepository(db)
+
+	authorized := a.Router.Group("/")
+	authorized.Use(func(c *gin.Context) {
+		headerAPIKey := c.GetHeader("Authorization")
+		accessId, err := authRepo.GetApiKey(headerAPIKey)
+		if err != nil || accessId == nil || *accessId == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"status": http.StatusUnauthorized,
+				"error":  "Unauthorized",
+			})
+			return
+		}
+	})
+
+	v1 := authorized.Group("/v1")
 	{
 		farm := v1.Group("/farm")
 		{
