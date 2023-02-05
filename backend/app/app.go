@@ -31,6 +31,11 @@ func New(cfg *config.Config) *App {
 	farmCase := usecase.NewFarmUsecase(farmRepo)
 	farmHand := handler.NewFarmHandler(farmCase)
 
+	// INIT - Pond
+	pondRepo := repository.NewPondRepository(db)
+	pondCase := usecase.NewPondUsecase(pondRepo, farmRepo)
+	pondHand := handler.NewPondHandler(pondCase)
+
 	v1 := a.Router.Group("/v1")
 	{
 		farm := v1.Group("/farm")
@@ -44,11 +49,11 @@ func New(cfg *config.Config) *App {
 
 		pond := v1.Group("/pond")
 		{
-			pond.GET("/", itemHandler.Fetch)
-			pond.GET("/:id", itemHandler.Get)
-			pond.POST("/", itemHandler.Store)
-			pond.PUT("/:id", itemHandler.Update)
-			pond.DELETE("/:id", itemHandler.Delete)
+			pond.GET("/", pondHand.Fetch)
+			pond.GET("/:farm_id/:pond_id", pondHand.GetById)
+			pond.POST("/", pondHand.Store)
+			pond.PUT("/", pondHand.UpdateById)
+			pond.DELETE("/:farm_id/:pond_id", pondHand.SoftDeleteById)
 		}
 
 		logs := v1.Group("/logs")

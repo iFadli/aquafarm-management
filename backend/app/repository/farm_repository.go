@@ -54,6 +54,24 @@ func (r *FarmRepository) Fetch() ([]model.Farm, error) {
 	return farms, nil
 }
 
+// GetFarmKeyById mengambil data FarmKey dari Tabel Farm berdasarkan farm_id
+func (r *FarmRepository) GetFarmKeyById(id string) (*string, error) {
+	query := `	SELECT farm_key
+				FROM farms
+				WHERE farm_id = ? AND is_deleted = ?`
+	row := r.DB.QueryRow(query, id, 0)
+
+	var farmKey *string
+	if err := row.Scan(&farmKey); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return farmKey, nil
+}
+
 // GetById mengambil data Farm berdasarkan farm_id
 func (r *FarmRepository) GetById(id string) (*model.Farm, bool, error) {
 	query := `	SELECT farm_id, farm_name, created_at, updated_at
