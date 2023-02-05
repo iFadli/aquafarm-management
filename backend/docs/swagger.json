@@ -1,0 +1,1054 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is Assignment Workspace for Coding Test DELOS Aqua.",
+        "title": "AquaFarm Management API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Fadli Zul Fahmi",
+            "url": "http://www.linkedin.com/in/fadli-zul-fahmi",
+            "email": "hi@fadli.dev"
+        },
+        "version": "0.6"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "paths": {
+        "/v1/farm": {
+            "put": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Update exist Farm data or Insert new if not exist.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Farms"
+                ],
+                "summary": "Update exist Farm data or Insert new",
+                "parameters": [
+                    {
+                        "description": "Required Data to Update or Insert Farm",
+                        "name": "pond",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.FarmStore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Create Data",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Update Data",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Insert one Farm Data.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Farms"
+                ],
+                "summary": "Insert new Farm data",
+                "parameters": [
+                    {
+                        "description": "Required Data to Insert Farm",
+                        "name": "pond",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.FarmStore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/farm/": {
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Get All Farms Data but only is_deleted = false.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Farms"
+                ],
+                "summary": "Get All Farms Data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseDataFarms"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/farm/{farmId}": {
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Get one Farm Data but only is_deleted = false.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Farms"
+                ],
+                "summary": "Get One Farm Data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Farm ID",
+                        "name": "farmId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseDataFarm"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Change Flagger (is_deleted) value on Database to TRUE.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Farms"
+                ],
+                "summary": "(soft) Delete exist Farm data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Farm ID",
+                        "name": "farmId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Pond ID",
+                        "name": "pondId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseDataPond"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/logs": {
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Get All Logs Data From Logs Middleware.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "Get All Logs Data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseDataLogs"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/logs/statistics": {
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Get Statistics Data From Logs Middleware.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "Get Statistics Data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseDataStatistics"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pond": {
+            "put": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Update exist Pond data or Insert new if not exist.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ponds"
+                ],
+                "summary": "Update exist Pond data or Insert new",
+                "parameters": [
+                    {
+                        "description": "Required Data to Update or Insert Pond",
+                        "name": "pond",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PondStore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Create Data",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Update Data",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Insert one Pond Data by send the FarmdId.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ponds"
+                ],
+                "summary": "Insert new Pond data",
+                "parameters": [
+                    {
+                        "description": "Required Data to Insert Pond",
+                        "name": "pond",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PondStore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pond/": {
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Get All Ponds Data by Joining Farm Table.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ponds"
+                ],
+                "summary": "Get All Ponds Data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseDataPonds"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pond/{farmId}/{pondId}": {
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Get one Pond Data by Joining Farm Table.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ponds"
+                ],
+                "summary": "Get One Pond Data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Farm ID",
+                        "name": "farmId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Pond ID",
+                        "name": "pondId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseDataPond"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "description": "Change Flagger (is_deleted) value on Database to TRUE.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ponds"
+                ],
+                "summary": "(soft) Delete exist Pond data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Farm ID",
+                        "name": "farmId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Pond ID",
+                        "name": "pondId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseDataPond"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.HTTPResponseAction"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "apiKey"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.FarmShow": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "farm_id": {
+                    "type": "string"
+                },
+                "farm_name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.FarmStore": {
+            "type": "object",
+            "properties": {
+                "farm_id": {
+                    "type": "string"
+                },
+                "farm_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Logs": {
+            "type": "object",
+            "properties": {
+                "access_id": {
+                    "type": "string"
+                },
+                "access_name": {
+                    "type": "string"
+                },
+                "accessed_at": {
+                    "type": "string"
+                },
+                "ip_address": {
+                    "type": "string"
+                },
+                "request": {
+                    "type": "string"
+                },
+                "response": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "string"
+                },
+                "user_agent": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PondShow": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "farm_id": {
+                    "type": "string"
+                },
+                "farm_name": {
+                    "type": "string"
+                },
+                "pond_id": {
+                    "type": "string"
+                },
+                "pond_name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PondStore": {
+            "type": "object",
+            "properties": {
+                "farm_id": {
+                    "type": "string"
+                },
+                "pond_id": {
+                    "type": "string"
+                },
+                "pond_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.StatisticsData": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "response_200": {
+                    "type": "integer"
+                },
+                "response_404": {
+                    "type": "integer"
+                },
+                "response_500": {
+                    "type": "integer"
+                },
+                "response_etc": {
+                    "type": "integer"
+                },
+                "unique_user_agent": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.StatisticsGroup": {
+            "type": "object",
+            "properties": {
+                "request": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/model.StatisticsData"
+                    }
+                }
+            }
+        },
+        "response.HTTPResponseAction": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.HTTPResponseDataFarm": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/model.FarmShow"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.HTTPResponseDataFarms": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.FarmShow"
+                    }
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.HTTPResponseDataLogs": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Logs"
+                    }
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.HTTPResponseDataPond": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/model.PondShow"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.HTTPResponseDataPonds": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.PondShow"
+                    }
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.HTTPResponseDataStatistics": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/model.StatisticsGroup"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "APIKeyHeader": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
