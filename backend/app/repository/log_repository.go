@@ -43,6 +43,10 @@ func (r *LogRepository) Fetch() ([]model.Logs, error) {
 		logs = append(logs, log)
 	}
 
+	if logs == nil {
+		logs = []model.Logs{}
+	}
+
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("error fetching rows: %w", err)
 	}

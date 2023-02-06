@@ -22,8 +22,6 @@ func New(cfg *config.Config) *App {
 		Router: gin.Default(),
 	}
 
-	//url := ginSwagger.URL("./swagger/doc.json")
-	//a.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 	a.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	db := repository.NewDB(cfg)
@@ -58,11 +56,6 @@ func New(cfg *config.Config) *App {
 		}
 		logRepo.FirstLog(logger)
 	})
-
-	//// INIT - Item
-	//newRepository := repository.NewItemRepository(db)
-	//itemUsecase := usecase.NewItemUsecase(newRepository)
-	//itemHandler := handler.NewItemHandler(itemUsecase)
 
 	// INIT - Farm
 	farmRepo := repository.NewFarmRepository(db)
