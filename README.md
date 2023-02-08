@@ -53,7 +53,7 @@ $ docker-compose up -d
 ```
 
 ### 4. Akses Proyek sesuai Kebutuhan
-Pada pengaturan Docker Proyek ini, secara default akan meng-expose Port 2 Service yang digunakan; Yakni, Database (MariaDB : 3306) dan Web Server (Nginx : 80).
+Pada pengaturan Docker Proyek ini, secara default akan meng-expose Port 2 Service yang digunakan; Yakni, Database (MariaDB : 3306) dan Web Server (Nginx : 8080).
 
 Jika ingin menghubungkan Database dengan Tool Database Manager seperti DBeaver, anda dapat menyesuaikan konfirugasi dengan File `.env`.
 #### !! DBeaver
